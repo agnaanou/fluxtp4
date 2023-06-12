@@ -92,8 +92,7 @@ data:
   ping_readiness_local.sh: |-
     #!/bin/bash
 
-    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< 
-"${REDIS_PASSWORD_FILE}")"
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
     response=$(
       timeout -s 3 $1 \
@@ -113,8 +112,7 @@ data:
   ping_liveness_local.sh: |-
     #!/bin/bash
 
-    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< 
-"${REDIS_PASSWORD_FILE}")"
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
     response=$(
       timeout -s 3 $1 \
@@ -128,18 +126,15 @@ data:
       exit 1
     fi
     responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
-    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] 
-&& [ "$responseFirstWord" != "MASTERDOWN" ]; then
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
       echo "$response"
       exit 1
     fi
   ping_readiness_master.sh: |-
     #!/bin/bash
 
-    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export 
-REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
-    [[ -n "$REDIS_MASTER_PASSWORD" ]] && export 
-REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    [[ -n "$REDIS_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
     response=$(
       timeout -s 3 $1 \
       redis-cli \
@@ -158,10 +153,8 @@ REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
   ping_liveness_master.sh: |-
     #!/bin/bash
 
-    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export 
-REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
-    [[ -n "$REDIS_MASTER_PASSWORD" ]] && export 
-REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    [[ -n "$REDIS_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
     response=$(
       timeout -s 3 $1 \
       redis-cli \
@@ -174,8 +167,7 @@ REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
       exit 1
     fi
     responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
-    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; 
-then
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; then
       echo "$response"
       exit 1
     fi
@@ -207,15 +199,12 @@ data:
   start-master.sh: |
     #!/bin/bash
 
-    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< 
-"${REDIS_PASSWORD_FILE}")"
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
-        cp /opt/bitnami/redis/mounted-etc/master.conf 
-/opt/bitnami/redis/etc/master.conf
+        cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
     fi
     if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
-        cp /opt/bitnami/redis/mounted-etc/redis.conf 
-/opt/bitnami/redis/etc/redis.conf
+        cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
     fi
     ARGS=("--port" "${REDIS_PORT}")
     ARGS+=("--requirepass" "${REDIS_PASSWORD}")
@@ -230,8 +219,7 @@ data:
         hostname="$1"
         type="$2"
 
-        port_var=$(echo "${hostname^^}_SERVICE_PORT_$type" | sed 
-"s/-/_/g")
+        port_var=$(echo "${hostname^^}_SERVICE_PORT_$type" | sed "s/-/_/g")
         port=${!port_var}
 
         if [ -z "$port" ]; then
@@ -255,27 +243,20 @@ data:
 
     REDISPORT=$(get_port "$HOSTNAME" "REDIS")
 
-    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< 
-"${REDIS_PASSWORD_FILE}")"
-    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export 
-REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
     if [[ ! -f /opt/bitnami/redis/etc/replica.conf ]];then
-        cp /opt/bitnami/redis/mounted-etc/replica.conf 
-/opt/bitnami/redis/etc/replica.conf
+        cp /opt/bitnami/redis/mounted-etc/replica.conf /opt/bitnami/redis/etc/replica.conf
     fi
     if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
-        cp /opt/bitnami/redis/mounted-etc/redis.conf 
-/opt/bitnami/redis/etc/redis.conf
+        cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
     fi
 
     echo "" >> /opt/bitnami/redis/etc/replica.conf
-    echo "replica-announce-port $REDISPORT" >> 
-/opt/bitnami/redis/etc/replica.conf
-    echo "replica-announce-ip $(get_full_hostname "$HOSTNAME")" >> 
-/opt/bitnami/redis/etc/replica.conf
+    echo "replica-announce-port $REDISPORT" >> /opt/bitnami/redis/etc/replica.conf
+    echo "replica-announce-ip $(get_full_hostname "$HOSTNAME")" >> /opt/bitnami/redis/etc/replica.conf
     ARGS=("--port" "${REDIS_PORT}")
-    ARGS+=("--slaveof" "${REDIS_MASTER_HOST}" 
-"${REDIS_MASTER_PORT_NUMBER}")
+    ARGS+=("--slaveof" "${REDIS_MASTER_HOST}" "${REDIS_MASTER_PORT_NUMBER}")
     ARGS+=("--requirepass" "${REDIS_PASSWORD}")
     ARGS+=("--masterauth" "${REDIS_MASTER_PASSWORD}")
     ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
@@ -411,10 +392,8 @@ spec:
         app.kubernetes.io/component: app
         nextcloud-redis-client: "true"
       annotations:
-        nextcloud-config-hash: 
-a5aae02b1b8278a9c8a2dc143e82d3737fc295f62c34afd617207f37d1b2b438
-        php-config-hash: 
-44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+        nextcloud-config-hash: a5aae02b1b8278a9c8a2dc143e82d3737fc295f62c34afd617207f37d1b2b438
+        php-config-hash: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
     spec:
       containers:
       - name: nextcloud
@@ -499,8 +478,7 @@ a5aae02b1b8278a9c8a2dc143e82d3737fc295f62c34afd617207f37d1b2b438
       - name: nextcloud-main
         emptyDir: {}
       securityContext:
-        # Will mount configuration files as www-data (id: 33) for 
-nextcloud
+        # Will mount configuration files as www-data (id: 33) for nextcloud
         fsGroup: 33
 ---
 # Source: nextcloud/charts/redis/templates/master/application.yaml
@@ -535,14 +513,10 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: master
       annotations:
-        checksum/configmap: 
-bebccb9c100a1ef0507cae21f22bb3a22f267ed52789a1c0de77ba6a0d83eaf9
-        checksum/health: 
-06298d57dbc0df0a79065861248c5e60f5716795e630aecce1dff4daf3d069f0
-        checksum/scripts: 
-5f488b79f7dc5a2ee47ebd4e3e15991fbf0c5541e146871f7df1066c919e7a9e
-        checksum/secret: 
-660880ffd193a7361fd86fc9b86f23e44edb9d9d4ccc166a58f0c234620b77e4
+        checksum/configmap: bebccb9c100a1ef0507cae21f22bb3a22f267ed52789a1c0de77ba6a0d83eaf9
+        checksum/health: 06298d57dbc0df0a79065861248c5e60f5716795e630aecce1dff4daf3d069f0
+        checksum/scripts: 5f488b79f7dc5a2ee47ebd4e3e15991fbf0c5541e146871f7df1066c919e7a9e
+        checksum/secret: 660880ffd193a7361fd86fc9b86f23e44edb9d9d4ccc166a58f0c234620b77e4
     spec:
       
       securityContext:
@@ -599,8 +573,7 @@ bebccb9c100a1ef0507cae21f22bb3a22f267ed52789a1c0de77ba6a0d83eaf9
           livenessProbe:
             initialDelaySeconds: 20
             periodSeconds: 5
-            # One second longer than command timeout should prevent 
-generation of zombie processes.
+            # One second longer than command timeout should prevent generation of zombie processes.
             timeoutSeconds: 6
             successThreshold: 1
             failureThreshold: 5
@@ -688,14 +661,10 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: replica
       annotations:
-        checksum/configmap: 
-bebccb9c100a1ef0507cae21f22bb3a22f267ed52789a1c0de77ba6a0d83eaf9
-        checksum/health: 
-06298d57dbc0df0a79065861248c5e60f5716795e630aecce1dff4daf3d069f0
-        checksum/scripts: 
-5f488b79f7dc5a2ee47ebd4e3e15991fbf0c5541e146871f7df1066c919e7a9e
-        checksum/secret: 
-660880ffd193a7361fd86fc9b86f23e44edb9d9d4ccc166a58f0c234620b77e4
+        checksum/configmap: bebccb9c100a1ef0507cae21f22bb3a22f267ed52789a1c0de77ba6a0d83eaf9
+        checksum/health: 06298d57dbc0df0a79065861248c5e60f5716795e630aecce1dff4daf3d069f0
+        checksum/scripts: 5f488b79f7dc5a2ee47ebd4e3e15991fbf0c5541e146871f7df1066c919e7a9e
+        checksum/secret: 660880ffd193a7361fd86fc9b86f23e44edb9d9d4ccc166a58f0c234620b77e4
     spec:
       
       securityContext:
@@ -736,8 +705,7 @@ bebccb9c100a1ef0507cae21f22bb3a22f267ed52789a1c0de77ba6a0d83eaf9
             - name: REDIS_REPLICATION_MODE
               value: slave
             - name: REDIS_MASTER_HOST
-              value: 
-nextcloud-redis-master-0.nextcloud-redis-headless.default.svc.cluster.local
+              value: nextcloud-redis-master-0.nextcloud-redis-headless.default.svc.cluster.local
             - name: REDIS_MASTER_PORT_NUMBER
               value: "6379"
             - name: ALLOW_EMPTY_PASSWORD
