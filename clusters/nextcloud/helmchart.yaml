@@ -1,5 +1,4 @@
 ---
-# Source: nextcloud/charts/redis/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 automountServiceAccountToken: true
@@ -12,7 +11,6 @@ metadata:
     app.kubernetes.io/instance: nextcloud
     app.kubernetes.io/managed-by: Helm
 ---
-# Source: nextcloud/charts/redis/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -27,7 +25,6 @@ type: Opaque
 data:
   redis-password: "Y2hhbmdlbWU="
 ---
-# Source: nextcloud/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -44,7 +41,6 @@ data:
   nextcloud-password: "Y2hhbmdlbWU="
   nextcloud-token: "VDNXcTRBdUNJZA=="
 ---
-# Source: nextcloud/charts/redis/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -57,27 +53,18 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 data:
   redis.conf: |-
-    # User-supplied common configuration:
-    # Enable AOF https://redis.io/topics/persistence#append-only-file
     appendonly yes
-    # Disable RDB persistence, AOF persistence already enabled.
     save ""
-    # End of common configuration
   master.conf: |-
     dir /data
-    # User-supplied master configuration:
     rename-command FLUSHDB ""
     rename-command FLUSHALL ""
-    # End of master configuration
   replica.conf: |-
     dir /data
     slave-read-only yes
-    # User-supplied replica configuration:
     rename-command FLUSHDB ""
     rename-command FLUSHALL ""
-    # End of replica configuration
 ---
-# Source: nextcloud/charts/redis/templates/health-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
