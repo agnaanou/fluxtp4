@@ -7,14 +7,14 @@ metadata:
 spec:
   chart:
     spec:
-      chart: weavegitops
+      chart: weave-gitops
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
         name: ww-gitops
   interval: 1m0s
   values:
-    adminUser: null
-    create: true
-    passwordHash: $2y$10$zTRdq9bLcEmGF27exGcKZ.LnSNIOpwV.n5H7tLP4/oyuSRGjTk7Ai
-    username: admin
+    adminUser:
+      create: true
+      passwordHash: $2y$10$zTRdq9bLcEmGF27exGcKZ.LnSNIOpwV.n5H7tLP4/oyuSRGjTk7Ai
+      username: admin
